@@ -2,7 +2,9 @@ import os
 import csv
 from pathlib import Path
 from services.xmlService import extractDataXML
-from services.pdfService import extractDataPDF
+# from services.pdfService import extractDataPDF, extractDataNotaPDF
+from services.proofService import parseProofPDF
+from services.notesService import parseNotesPDF
 from classes.fornecedor import loadSuppliers
 
 pathFolder = r".\20250404"
@@ -12,15 +14,24 @@ csvData = []
 
 for subFolder in os.listdir(pathFolder):
     subfolder_path = os.path.join(pathFolder, subFolder)
+    notaXML = False
 
     for file in sorted(os.listdir(subfolder_path)):
-        file_path = os.path.join(subfolder_path, file)
+        filePath = os.path.join(subfolder_path, file)
         
         if file.endswith(".xml"):
-            nota = extractDataXML(file_path, produtosFornecedor)
+            nota = extractDataXML(filePath, produtosFornecedor)    
+            notaXML = True
 
-        if file.endswith(".pdf"):
-            comp = extractDataPDF(file_path)
+        if file.endswith(".pdf") and not "CNDS" in filePath.upper():            
+            comp = parseProofPDF(filePath)
+            if not notaXML:
+                nota = parseNotesPDF(filePath, produtosFornecedor)
+
+            #   if nota is None:
+            #     print(f"⚠️ Não foi possível extrair a nota do PDF: {file_path}")
+            #     continue
+            #   print(f"nota: {nota.nNota}")
 
     csvData.append({
         "DataEmissao": nota.emissao.strftime("%d/%m/%Y"),
@@ -54,6 +65,6 @@ header = [
     
 with open ("cargaWebSAASS.csv", mode='w', newline="", encoding='utf-8') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=header, delimiter=';', extrasaction='ignore')
-    # writer.writeheader()
+    writer.writeheader() #escreve o cabeçalho no arquivo CSV
     for item in csvData:
         writer.writerow(item)      

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 def dateConverter(data: str) -> datetime | None:
-    formatos = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y%m%d"]
+    formatos = ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%Y%m%d", "%d/%m/%y", "%d-%m-%y", "%Y-%m-%dT%H:%M:%S", "%Y%m%dT%H:%M:%S"]
     data = data.strip()
     for formato in formatos:
         try:
