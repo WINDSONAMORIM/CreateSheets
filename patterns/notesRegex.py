@@ -21,7 +21,7 @@ class NotesRegex:
         
         @property
         def matchNota(self):
-            match = re.search(r'N[ÚU]MERO DA NOTA', self.line, re.IGNORECASE)
+            match = re.search(r'N[ÚU]MERO DA (?:NOTA\.?|NFS-e)[^0-9]*?', self.line, re.IGNORECASE)
             return match.group(0) if match else None
         
         @property 
@@ -31,7 +31,7 @@ class NotesRegex:
 
         @property
         def matchNotaInline(self):
-            match = re.search(r'N[ÚU]MERO DA NOTA\d+', self.line, re.IGNORECASE)
+            match = re.search(r'N[ÚU]MERO DA (?:NOTA\.?|NFS-e)[^0-9]*?(\d+)', self.line, re.IGNORECASE)
             return match.group(0) if match else None
 
         @property
